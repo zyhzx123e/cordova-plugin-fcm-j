@@ -1,0 +1,24 @@
+buildscript {
+	repositories {
+         maven { url "https://maven.google.com" }
+            jcenter()
+			mavenLocal()
+        }
+    dependencies {//Jason 7Aug2020 - added pre-build config for dynamic plugin injection for huawei & gms
+        def cdvVersionName=privateHelpers.extractStringFromManifest("versionName")
+        //classpath 'com.android.tools.build:gradle:+' 
+        classpath 'com.android.tools.build:gradle:3.3.0' 
+         if(!cdvVersionName.contains('(H)') ){
+            classpath 'com.google.gms:google-services:4.0.0'
+            //Note: do not put the + sign for google-services bcz it will grab the latest from internet in build time, but sometime the latest not compatible
+            //Jason fix the issue 'cannot create a proxy class for abstract class 'GoogleservicesTask''
+            // classpath 'com.google.gms:google-services:+'
+         }
+    }
+}
+// apply plugin: 'com.google.gms.google-services'
+// class must be used instead of id(string) to be able to apply plugin from non-root gradle file
+def cdvVersionName=privateHelpers.extractStringFromManifest("versionName")
+ if(!cdvVersionName.contains('(H)') ){//Jason 7Aug2020 - added pre-build config for dynamic plugin injection for huawei & gms
+apply plugin: com.google.gms.googleservices.GoogleServicesPlugin
+ }
